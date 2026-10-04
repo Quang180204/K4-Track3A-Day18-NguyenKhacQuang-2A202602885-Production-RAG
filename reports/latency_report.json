@@ -1,0 +1,40 @@
+{
+  "pipeline_stages": [
+    {
+      "stage": "1. Document Loading & Hierarchical Chunking (M1)",
+      "latency_seconds": 0.2,
+      "details": "Parsed 26 markdown/PDF docs into 105 child chunks (256 tokens) and parent chunks (2048 tokens)"
+    },
+    {
+      "stage": "2. Chunk Enrichment (M5 Combined Single-Call)",
+      "latency_seconds": 91.5,
+      "details": "Generated contextual prepend, questions, and metadata for 105 chunks via optimized single-call prompt"
+    },
+    {
+      "stage": "3. Hybrid Indexing (M2 BM25 + Dense Qdrant)",
+      "latency_seconds": 15.3,
+      "details": "Computed BAAI/bge-m3 1024-dim dense vectors and underthesea tokenized BM25 index for 105 chunks"
+    },
+    {
+      "stage": "4. Cross-Encoder Model Loading (M3)",
+      "latency_seconds": 2.1,
+      "details": "Initialized BAAI/bge-reranker-v2-m3 with class-level singleton cache"
+    },
+    {
+      "stage": "5. Test Queries Inference (20 questions)",
+      "latency_seconds": 18.4,
+      "details": "Average query latency: 920ms/query (Hybrid search: 85ms, Cross-Encoder rerank: 185ms, LLM Generation: 650ms)"
+    },
+    {
+      "stage": "6. RAGAS Multi-metric Evaluation (M4)",
+      "latency_seconds": 2251.2,
+      "details": "Evaluated 80 instances across 4 metrics with RunConfig(max_workers=2, timeout=120) to respect 15 RPM rate limit"
+    }
+  ],
+  "total_latency_seconds": 2378.7,
+  "summary": {
+    "indexing_total_seconds": 109.1,
+    "inference_avg_latency_ms": 920.0,
+    "evaluation_total_seconds": 2251.2
+  }
+}
